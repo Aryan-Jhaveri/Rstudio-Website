@@ -29,10 +29,17 @@ async function fetchData() {
     }
 }
 
-// Helper function to get value from an XML element
 function getValue(parentElement, tagName) {
+    // Select the child element with the specified tagName
     const element = parentElement.querySelector(tagName);
-    return element ? element.textContent : null;
+
+    // Check if the element exists and has a text content
+    if (element && element.textContent) {
+        return element.textContent;
+    } else {
+        // If the element does not exist or has no text content, return null
+        return null;
+    }
 }
 
 
