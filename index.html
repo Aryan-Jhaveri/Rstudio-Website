@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brock University Events</title>
-
-<!-- Add Shiny library dependencies -->
-<script src="https://cdn.jsdelivr.net/npm/shiny@1.7.1/shiny.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/shinyjs@2.0.10/shinyjs.min.js"></script>
-
-
-  <!-- Reference your external JavaScript file -->
-  <script src="app.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brock University Events</title>
+    <!-- Add your own styles or use an external stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Include DataTables styles -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 </head>
-
 <body>
-  <!-- Shiny app UI goes here -->
-  <div id="shiny-container">
-    <!-- Your Shiny app will be loaded here -->
-  </div>
-</body>
 
+    <h1>Brock University Events</h1>
+
+    <!-- Add a date range input for selecting a week -->
+    <label for="weekSelector">Select Week:</label>
+    <input type="date" id="weekSelector" value="" />
+
+    <!-- Add a DataTable container -->
+    <table id="eventsTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Link</th>
+                <th>Enclosure</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Include jQuery and DataTables scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <!-- Add your own scripts or use an external JavaScript file -->
+    <script src="script.js"></script>
+</body>
 </html>
