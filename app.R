@@ -1,48 +1,81 @@
-# app.R
-
-# Install and load required packages
-if (!requireNamespace("shiny", quietly = TRUE)) {
-  install.packages("shiny")
-}
-install.packages(c("purrr", "lubridate", "rvest", "dplyr"))
-
+# Required Libraries
 library(shiny)
-library(xml2)
-library(tidyverse)
-library(lubridate)
 library(rvest)
-library(httr)  # Add this line
+library(dplyr)
+library(xml2)
+library(lubridate)
 
-# Function to process events data
-process_events_data <- function(xml_url) {
-  # Paste the function code here
-}
-
-# Define UI
+# Define UI for application
 ui <- fluidPage(
-  titlePanel("Events Data Processing"),
-  textInput("xml_url", "Enter XML URL:", "https://experiencebu.brocku.ca/events.rss"),
-  dateInput("selected_week", "Select Week:", value = Sys.Date(), weekstart = 0),
-  actionButton("process_button", "Process Events"),
-  tableOutput("result_output")
+  titlePanel("Brock University Events"),
+  actionButton("processBtn", "Process Events"),
+  tableOutput("table")
 )
 
 # Define server logic
 server <- function(input, output) {
-  # Paste the server logic code here
+  
+  # Reactive values to store processed data
+  processedData <- reactiveVal(NULL)
+  
+  observeEvent(input$processBtn, {
+    # This block will be executed when the button is clicked
+    
+    url <- "https://experiencebu.brocku.ca/events.rss"
+    
+    # Suppress warnings when reading the XML
+    page <- suppressWarnings(read_xml(url))
+    
+    # Define namespace
+    ns <- xml_ns(page)
+    attr(ns, "events") <- "http://purl.org/NET/c4dm/event.owl#"
+    
+    # Extract event details
+    events <- xml_find_all(page, "//item")
+    
+    # Extract data from each event
+    # Initialize Descriptions column
+    data <- tibble(
+      Title = xml_text(xml_find_all(events, ".//title")),
+      Link = xml_text(xml_find_all(events, ".//link")),
+      Start = xml_text(xml_find_first(events, ".//*[local-name()='start']", ns)),
+      descriptions = xml_find_all(events, ".//description") %>% xml_text(),
+      End = xml_text(xml_find_first(events, ".//*[local-name()='end']", ns)),
+    )
+    # Remove rows with missing Start or End values
+    data <- data[complete.cases(data$Start, data$End), ]
+    
+    for (i in seq_along(data$descriptions)) {
+      # Parse HTML content
+      html_content <- read_html(data$descriptions[i])
+      
+      # Extract text from HTML
+      text_content <- html_text(html_content)
+      
+      # Print or store the extracted text
+      #cat("Converted text from row", i, ":\n", text_content, "\n\n")
+      
+      # If you want to replace the original HTML content with the text, uncomment the line below
+      data$descriptions[i] <- text_content
+    }
+    
+    # Parse Start and End columns to date-time objects
+    data$Start <- ymd_hms(data$Start, tz = "UTC")
+    data$End <- ymd_hms(data$End, tz = "UTC")
+    
+    # Convert Start and End columns to EST
+    data$Start <- with_tz(data$Start, tzone = "EST")
+    data$End <- with_tz(data$End, tzone = "EST")
+    
+    # Save processed data to reactive values
+    processedData(data)
+  })
+  
+  # Render the table only when the button is clicked
+  output$table <- renderTable({
+    processedData()
+  })
 }
 
 # Run the application
-shinyApp(ui, server)
-
-# Deploy the app to shinyapps.io
-if (interactive()) {
-  rsconnect::setAccountInfo(name='ajtest1',
-                            token='17A2C1D99B55A3E9B8FAFBD671A93A8D',
-                            secret='<SECRET>')
-  
-  rsconnect::deployApp(
-    appName = "your-shinyapp-name",
-    server = "shinyapps.io"
-  )
-}
+shinyApp(ui = ui, server = server)
