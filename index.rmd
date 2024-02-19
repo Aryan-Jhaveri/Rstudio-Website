@@ -1,0 +1,20 @@
+---
+title: "Events Data Processing Shiny App"
+output: html_document
+---
+
+# Welcome to the Events Data Processing Shiny App
+
+This Shiny app processes events data from an XML source and displays the results.
+
+## Usage
+
+1. Enter the XML URL in the provided text box.
+2. Select a week using the date input.
+3. Click the "Process Events" button.
+4. View the processed events in the table.
+
+## App Code
+
+```r
+# Paste the content of your app.R file here
