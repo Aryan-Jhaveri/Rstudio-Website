@@ -11,7 +11,6 @@ ui <- fluidPage(
   actionButton("processBtn", "Process Events"),
   tableOutput("table")
 )
-
 # Define server logic
 server <- function(input, output) {
   
