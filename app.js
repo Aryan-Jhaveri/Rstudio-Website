@@ -1,12 +1,15 @@
+// Assuming you have jQuery included in your project
+// and have included the necessary XML and ShinyJS libraries
+
 // Define UI for application
-const ui = fluidPage(
-  titlePanel("Brock University Events"),
-  actionButton("processBtn", "Process Events"),
-  tableOutput("table")
-);
+const ui = '<div>' +
+  '<h1>Brock University Events</h1>' +
+  '<button id="processBtn">Process Events</button>' +
+  '<table id="table"></table>' +
+'</div>';
 
 // Define server logic
-const server = function(input, output) {
+const server = function() {
   // Reactive values to store processed data
   const processedData = new ReactiveVar(null);
 
@@ -66,19 +69,15 @@ const server = function(input, output) {
 
     // Save processed data to reactive values
     processedData.set(validData);
-  });
 
-  // Render the table only when the button is clicked
-  output$table = renderTable({
-    const data = processedData.get();
-    if (data !== null) {
-      // Format Start and End columns as time values
-      data.Start = data.Start.toLocaleString('en-CA', { timeZone: 'America/Toronto' });
-      data.End = data.End.toLocaleString('en-CA', { timeZone: 'America/Toronto' });
-    }
-    return data;
+    // Render the table
+    renderTable(validData);
   });
 };
 
 // Run the application
-shinyApp(ui = ui, server = server);
+shinyjs.ready(function() {
+  // Your initialization code here
+  shinyjs.setHtml('#shiny-container', ui);
+  server();
+});
