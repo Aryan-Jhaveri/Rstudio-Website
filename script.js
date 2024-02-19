@@ -1,27 +1,40 @@
 // Fetch data from the RSS feed
+// Fetch data from the RSS feed
 async function fetchData() {
-    const url = "https://experiencebu.brocku.ca/events.rss";
-    const response = await fetch(url);
-    const xmlText = await response.text();
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-    const events = xmlDoc.querySelectorAll("item");
+    try {
+        const url = "https://experiencebu.brocku.ca/events.rss";
+        const response = await fetch(url);
+        const xmlText = await response.text();
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        const events = xmlDoc.querySelectorAll("item");
 
-    const data = [];
-    events.forEach((event) => {
-        const eventData = {
-            Title: event.querySelector("title").textContent,
-            Link: event.querySelector("link").textContent,
-            Start: event.querySelector("start").textContent,
-            Description: event.querySelector("description").textContent,
-            End: event.querySelector("end").textContent,
-            Enclosure: event.querySelector("enclosure").getAttribute("url"),
-        };
-        data.push(eventData);
-    });
+        const data = [];
+        events.forEach((event) => {
+            const eventData = {
+                Title: getValue(event, "title"),
+                Link: getValue(event, "link"),
+                Start: getValue(event, "start"),
+                Description: getValue(event, "description"),
+                End: getValue(event, "end"),
+                Enclosure: getValue(event.querySelector("enclosure"), "url"),
+            };
+            data.push(eventData);
+        });
 
-    return data;
+        return data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return [];
+    }
 }
+
+// Helper function to get value from an XML element
+function getValue(parentElement, tagName) {
+    const element = parentElement.querySelector(tagName);
+    return element ? element.textContent : null;
+}
+
 
 // Display data in DataTable
 async function displayData() {
