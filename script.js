@@ -1,5 +1,4 @@
 // Fetch data from the RSS feed
-// Fetch data from the RSS feed
 async function fetchData() {
     try {
         const url = "https://experiencebu.brocku.ca/events.rss";
@@ -29,19 +28,11 @@ async function fetchData() {
     }
 }
 
+// Helper function to get value from an XML element
 function getValue(parentElement, tagName) {
-    // Select the child element with the specified tagName
     const element = parentElement.querySelector(tagName);
-
-    // Check if the element exists and has a text content
-    if (element && element.textContent) {
-        return element.textContent;
-    } else {
-        // If the element does not exist or has no text content, return null
-        return null;
-    }
+    return element ? element.textContent : null;
 }
-
 
 // Display data in DataTable
 async function displayData() {
