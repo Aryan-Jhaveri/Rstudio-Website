@@ -37,7 +37,12 @@ shinyApp(ui, server)
 
 # Deploy the app to shinyapps.io
 if (interactive()) {
-rsconnect::setAccountInfo(name='ajtest1',
-			  token='17A2C1D99B55A3E9B8FAFBD671A93A8D',
-			  secret='<SECRET>')
+  rsconnect::setAccountInfo(name='ajtest1',
+                            token='17A2C1D99B55A3E9B8FAFBD671A93A8D',
+                            secret='<SECRET>')
+  
+  rsconnect::deployApp(
+    appName = "your-shinyapp-name",
+    server = "shinyapps.io"
+  )
 }
