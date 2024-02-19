@@ -53,17 +53,17 @@ server <- function(input, output) {
       text_content <- html_text(html_content)
       
       # Print or store the extracted text
-      #cat("Converted text from row", i, ":\n", text_content, "\n\n")
+      # cat("Converted text from row", i, ":\n", text_content, "\n\n")
       
       # If you want to replace the original HTML content with the text, uncomment the line below
       data$descriptions[i] <- text_content
     }
     
-    # Parse Start and End columns to date-time objects
-    data$Start <- ymd_hms(data$Start, tz = "UTC")
-    data$End <- ymd_hms(data$End, tz = "UTC")
+    # Convert date-time columns to POSIXct
+    data$Start <- as.POSIXct(data$Start, format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
+    data$End <- as.POSIXct(data$End, format = "%a, %d %b %Y %H:%M:%S", tz = "GMT")
     
-    # Convert Start and End columns to EST
+    # Convert timestamps to Eastern Time (EST)
     data$Start <- with_tz(data$Start, tzone = "EST")
     data$End <- with_tz(data$End, tzone = "EST")
     
@@ -73,9 +73,16 @@ server <- function(input, output) {
   
   # Render the table only when the button is clicked
   output$table <- renderTable({
-    processedData()
+    data <- processedData()
+    if (!is.null(data)) {
+      # Format Start and End columns as time values
+      data$Start <- format(data$Start, "%d-%m-%Y %I:%M %p")
+      data$End <- format(data$End, "%d-%m-%Y %I:%M %p")
+    }
+    return(data)
   })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
