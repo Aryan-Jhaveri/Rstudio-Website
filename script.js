@@ -80,7 +80,7 @@ async function displayData() {
             { data: "End" },
             { data: "Link",
                 render: function (data, type, row) {
-                    // Render the "Link" column as a hyperlink
+                    // Render the "Link" column as a clickable hyperlink
                     return `<a href="${data}" target="_blank">${data}</a>`;
                 }
             },
@@ -99,3 +99,4 @@ async function displayData() {
 $(document).ready(function () {
     displayData();
 });
+
