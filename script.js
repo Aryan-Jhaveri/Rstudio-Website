@@ -83,6 +83,40 @@ async function displayData() {
         ],
         // Add other DataTable configurations here
     });
+
+    // Initialize datepicker for start and end date selection
+    $("#startDate, #endDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function () {
+            // Redraw the DataTable when a date is selected
+            table.draw();
+        }
+    });
+
+    // Add custom filtering based on selected start and end dates
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            const startDate = $("#startDate").datepicker("getDate");
+            const endDate = $("#endDate").datepicker("getDate");
+
+            const eventStartDate = new Date(data[1]); // Assuming 'Start' column is at index 1
+            const eventEndDate = new Date(data[2]);   // Assuming 'End' column is at index 2
+
+            return (startDate === null || eventStartDate >= startDate) &&
+                   (endDate === null || eventEndDate <= endDate);
+        }
+    );
+
+    // Handle date range selection and redraw DataTable
+    $("#applyFilter").on("click", function () {
+        table.draw();
+    });
+
+    // Clear date range filter
+    $("#clearFilter").on("click", function () {
+        $("#startDate, #endDate").val("");
+        table.draw();
+    });
 }
 
 // Trigger displayData on page load
