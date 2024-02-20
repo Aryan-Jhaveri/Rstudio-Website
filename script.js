@@ -78,44 +78,20 @@ async function displayData() {
             { data: "Title" },
             { data: "Start" },
             { data: "End" },
-            { data: "Link" },
-            { data: "Enclosure" },
+            { data: "Link",
+                render: function (data, type, row) {
+                    // Render the "Link" column as a hyperlink
+                    return `<a href="${data}" target="_blank">${data}</a>`;
+                }
+            },
+            { data: "Enclosure",
+                render: function (data, type, row) {
+                    // Render the "Enclosure" column as an image hyperlink
+                    return data ? `<a href="${row.Link}" target="_blank">${data}</a>` : "";
+                }
+            },
         ],
         // Add other DataTable configurations here
-    });
-
-    // Initialize datepicker for start and end date selection
-    $("#startDate, #endDate").datepicker({
-        dateFormat: "yy-mm-dd",
-        onSelect: function () {
-            // Redraw the DataTable when a date is selected
-            table.draw();
-        }
-    });
-
-    // Add custom filtering based on selected start and end dates
-    $.fn.dataTable.ext.search.push(
-        function (settings, data, dataIndex) {
-            const startDate = $("#startDate").datepicker("getDate");
-            const endDate = $("#endDate").datepicker("getDate");
-
-            const eventStartDate = new Date(data[1]); // Assuming 'Start' column is at index 1
-            const eventEndDate = new Date(data[2]);   // Assuming 'End' column is at index 2
-
-            return (startDate === null || eventStartDate >= startDate) &&
-                   (endDate === null || eventEndDate <= endDate);
-        }
-    );
-
-    // Handle date range selection and redraw DataTable
-    $("#applyFilter").on("click", function () {
-        table.draw();
-    });
-
-    // Clear date range filter
-    $("#clearFilter").on("click", function () {
-        $("#startDate, #endDate").val("");
-        table.draw();
     });
 }
 
