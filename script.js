@@ -51,7 +51,6 @@ function getValue(parentElement, tagName) {
     return element ? element.textContent : null;
 }
 
-// Helper function to convert time to Eastern Standard Time (EST)
 // Helper function to convert time to Eastern Standard Time (EST) and format it
 function convertToEST(dateTimeString) {
     // Assuming dateTimeString is in ISO format
@@ -64,7 +63,6 @@ function convertToEST(dateTimeString) {
 
     return formattedDateTime;
 }
-
 
 // Display data in DataTable
 async function displayData() {
@@ -87,10 +85,43 @@ async function displayData() {
         ],
         // Add other DataTable configurations here
     });
+
+    // Initialize datepicker for start and end date selection
+    $("#startOfWeek, #endOfWeek").datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function () {
+            // Redraw the DataTable when a date is selected
+            table.draw();
+        }
+    });
+
+    // Add custom filtering based on selected start and end dates
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            const startOfWeek = $("#startOfWeek").datepicker("getDate");
+            const endOfWeek = $("#endOfWeek").datepicker("getDate");
+
+            const eventStartDate = new Date(data[1]); // Assuming 'Start' column is at index 1
+            const eventEndDate = new Date(data[2]);   // Assuming 'End' column is at index 2
+
+            return (startOfWeek === null || eventStartDate >= startOfWeek) &&
+                   (endOfWeek === null || eventEndDate <= endOfWeek);
+        }
+    );
+
+    // Handle date range selection and redraw DataTable
+    $("#applyDateFilter").on("click", function () {
+        table.draw();
+    });
+
+    // Clear date range filter
+    $("#clearDateFilter").on("click", function () {
+        $("#startOfWeek, #endOfWeek").val("");
+        table.draw();
+    });
 }
 
 // Trigger displayData on page load
 $(document).ready(function () {
     displayData();
 });
-
