@@ -52,12 +52,19 @@ function getValue(parentElement, tagName) {
 }
 
 // Helper function to convert time to Eastern Standard Time (EST)
+// Helper function to convert time to Eastern Standard Time (EST) and format it
 function convertToEST(dateTimeString) {
     // Assuming dateTimeString is in ISO format
     const utcDateTime = new Date(dateTimeString);
     const estDateTime = new Date(utcDateTime.toLocaleString("en-US", { timeZone: "America/New_York" }));
-    return estDateTime.toISOString(); // You can format this as needed
+
+    // Format the date in a more readable format
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
+    const formattedDateTime = estDateTime.toLocaleString("en-US", options);
+
+    return formattedDateTime;
 }
+
 
 // Display data in DataTable
 async function displayData() {
