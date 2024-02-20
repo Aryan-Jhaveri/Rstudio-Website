@@ -78,12 +78,6 @@ async function displayData() {
             { data: "Title" },
             { data: "Start" },
             { data: "End" },
-            { data: "Link",
-                render: function (data, type, row) {
-                    // Render the "Link" column as a clickable hyperlink
-                    return `<a href="${data}" target="_blank">${data}</a>`;
-                }
-            },
             { data: "Enclosure",
                 render: function (data, type, row) {
                     // Render the "Enclosure" column as an image hyperlink
