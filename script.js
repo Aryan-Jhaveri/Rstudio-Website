@@ -23,14 +23,13 @@ async function fetchData() {
                 Title: getValue(event, "title"),
                 // Extract and store the text content of 'link' element
                 Link: getValue(event, "link"),
-                // Extract and store the text content of 'start' element
-                Start: getValue(event, "start"),
+                // Convert and store the 'start' and 'end' elements to EST
+                Start: convertToEST(getValue(event, "start")),
+                End: convertToEST(getValue(event, "end")),
                 // Extract and store the text content of 'description' element
                 Description: getValue(event, "description"),
-                // Extract and store the text content of 'end' element
-                End: getValue(event, "end"),
                 // Extract and store the 'url' attribute from 'enclosure' element (or null if 'enclosure' does not exist)
-                Enclosure: enclosureElement ? enclosureElement.getAttribute("url") : null,
+                Enclosure: enclosureElement ? `<img src="${enclosureElement.getAttribute("url")}" alt="Event Image">` : null,
             };
             data.push(eventData);
         });
@@ -50,6 +49,14 @@ function getValue(parentElement, tagName) {
 
     // Return the text content of the element, or null if the element does not exist
     return element ? element.textContent : null;
+}
+
+// Helper function to convert time to Eastern Standard Time (EST)
+function convertToEST(dateTimeString) {
+    // Assuming dateTimeString is in ISO format
+    const utcDateTime = new Date(dateTimeString);
+    const estDateTime = new Date(utcDateTime.toLocaleString("en-US", { timeZone: "America/New_York" }));
+    return estDateTime.toISOString(); // You can format this as needed
 }
 
 // Display data in DataTable
